@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Razorpay ReserveEngine — Autonomous Agent Mandate & Settlement Console</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="console-shell">
+    <!-- Top Enterprise Header -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <div class="razorpay-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M14.5 2L5 13H11L9.5 22L19 11H13L14.5 2Z" fill="#3395FF" stroke="#3395FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="product-title">Razorpay <span class="accent-text">ReserveEngine</span></span>
+          <span class="badge-protocol">NPCI UPI SBMD v1.4</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="conn-pill">
+          <span class="live-dot"></span>
+          <span>Connected to Razorpay Sandbox</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="handleResetMandate()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Reset Demo Mandate</span>
+        </button>
+        <button class="btn btn-danger-outline btn-sm" onclick="handleRevokeMandate()">
+          <span>Revoke Token</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI Metrics Banner -->
+    <section class="kpi-banner">
+      <!-- Metric 1 -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">TOTAL RESERVE AUTHORIZED</span>
+          <span class="kpi-subtag">NPCI SBMD Limit</span>
+        </div>
+        <div class="kpi-value" id="metric-total-authorized">₹5,000.00</div>
+        <div class="kpi-footer">
+          <span id="metric-total-paise">500,000 paise</span>
+          <span class="pill-mandate-id" id="mandate-id-pill">sbm_live_9f82c</span>
+        </div>
+      </div>
+
+      <!-- Metric 2 -->
+      <div class="kpi-card highlight-card">
+        <div class="kpi-header">
+          <span class="kpi-label">AVAILABLE HEADROOM</span>
+          <span class="kpi-pct" id="metric-utilization-pct">0% Used</span>
+        </div>
+        <div class="kpi-value accent-green" id="metric-available-headroom">₹5,000.00</div>
+        <div class="headroom-progress-bar">
+          <div class="headroom-progress-fill" id="headroom-fill" style="width: 100%;"></div>
+        </div>
+        <div class="kpi-footer">
+          <span id="metric-headroom-paise">500,000 paise available</span>
+          <span class="status-active-badge" id="mandate-status-badge">ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- Metric 3 -->
+      <div class="kpi-card danger-card">
+        <div class="kpi-header">
+          <span class="kpi-label">SECURITY INCIDENTS BLOCKED</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="kpi-value accent-red" id="metric-incidents-blocked">0</div>
+        <div class="kpi-footer">
+          <span>Headroom & MCC Gatekeeper</span>
+          <span class="subtext-pill">Zero Payer Loss</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operational Split Console -->
+    <main class="console-body">
+      <!-- Left Panel: Autonomous Agent Dispatcher & Execution Stream -->
+      <section class="ops-panel left-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3395FF" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <h2>Autonomous Agent Mission Dispatcher</h2>
+          </div>
+          <span class="agent-id-tag">Authorized: <code>agent_devops_autonomous</code></span>
+        </div>
+
+        <!-- Mission Input Form -->
+        <div class="mission-input-card">
+          <label class="input-label" for="mission-prompt">Assign Operational Mission to Autonomous Buyer Agent:</label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="mission-prompt"
+              placeholder="e.g. Spin up 1x H100 GPU compute node for model fine-tuning..."
+              value="Spin up 1x H100 GPU compute node and provision vector DB index"
+            />
+            <button class="btn btn-primary" id="btn-dispatch" onclick="handleDispatchMission()">
+              <span>Dispatch Agent</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Quick Test Scenarios -->
+          <div class="scenario-actions">
+            <span class="scenario-label">Quick Scenarios:</span>
+            <button class="btn-scenario safe" onclick="setScenario('safe')">
+              <span class="dot safe"></span> Safe Mission: GPU + Vector DB (Within Headroom)
+            </button>
+            <button class="btn-scenario danger" onclick="setScenario('overspend')">
+              <span class="dot danger"></span> Overspend Mission: ₹8,000 DGX Rack (Exceeds Headroom)
+            </button>
+            <button class="btn-scenario warning" onclick="setScenario('unauthorized_mcc')">
+              <span class="dot warning"></span> Forbidden MCC: Casino/Gambling Compute (Blocked by MCC)
+            </button>
+          </div>
+        </div>
+
+        <!-- Terminal Execution Trace Stream -->
+        <div class="terminal-card">
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <span class="t-dot red"></span>
+              <span class="t-dot yellow"></span>
+              <span class="t-dot green"></span>
+            </div>
+            <span class="terminal-title">AGENT EXECUTION STREAM • DETERMINISTIC FINANCIAL GATEKEEPER</span>
+            <span class="terminal-clock" id="terminal-clock">READY</span>
+          </div>
+
+          <div class="terminal-content" id="terminal-stream">
+            <div class="term-line info">
+              <span class="term-ts">[SYSTEM]</span> ReserveEngine Gatekeeper initialized. NPCI SBMD mandate sbm_live_9f82c active.
+            </div>
+            <div class="term-line info">
+              <span class="term-ts">[POLICY]</span> Allowed MCCs: [7372:Cloud Services, 8999:API Services, 7311:Ad Placement].
+            </div>
+            <div class="term-line prompt">
+              <span class="term-ts">[READY]</span> Awaiting autonomous agent dispatch...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Tamper-Evident Forensic Audit Ledger -->
+      <section class="ops-panel right-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <h2>Tamper-Evident Forensic Audit Ledger</h2>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="fetchLedger()" title="Refresh Ledger">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Sync</span>
+          </button>
+        </div>
+
+        <div class="ledger-table-container">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Txn ID</th>
+                <th>Purpose / Task</th>
+                <th>Target & MCC</th>
+                <th style="text-align: right;">Amount</th>
+                <th>Gate Verdict</th>
+                <th>HMAC Proof</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody">
+              <tr>
+                <td colspan="7" class="loading-state">Loading forensic audit records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Inspector Modal for HMAC Cryptographic Proof -->
+    <div id="inspector-modal" class="modal-overlay hidden">
+      <div class="modal-window">
+        <div class="modal-head">
+          <div class="modal-title-row">
+            <span class="modal-icon">🔐</span>
+            <div>
+              <h3>Cryptographic Ledger Proof Inspector</h3>
+              <span class="modal-subtitle" id="inspect-tx-id">tx_...</span>
+            </div>
+          </div>
+          <button class="modal-close-btn" onclick="closeInspectorModal()">&times;</button>
+        </div>
+
+        <div class="modal-body" id="inspect-modal-body">
+          <!-- Dynamic Content -->
+        </div>
+
+        <div class="modal-foot">
+          <span class="compliance-tag">NPCI UPI SBMD Specification • Constant-Time Comparison Verified</span>
+          <button class="btn btn-secondary" onclick="closeInspectorModal()">Close Inspector</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
