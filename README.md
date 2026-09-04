@@ -3,24 +3,39 @@
 > **Enterprise Autonomous Agent Mandate & Execution Console**  
 > Built on **NPCI UPI Reserve Pay (Single Block Multi-Debit - SBMD v1.4)** Standards.
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-onrender.com-46E3B7?style=for-the-badge&logo=render)](https://razorpay-reserve-engine.onrender.com/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/Mansi5543/razorpay-reserve-engine)
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg?logo=node.js)](https://nodejs.org/)
 [![NPCI UPI SBMD](https://img.shields.io/badge/NPCI_Protocol-UPI_SBMD_v1.4-orange.svg)](https://www.npci.org.in/)
 [![Razorpay](https://img.shields.io/badge/Payment_Gateway-Razorpay_Core-blue.svg)](https://razorpay.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker)](Dockerfile)
 [![Vitest](https://img.shields.io/badge/Tests-30_Passed-emerald.svg)](https://vitest.dev/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-lightgrey.svg)](LICENSE)
 
 ---
 
+### 🌐 Live Production Deployment
+
+**Try the Live Console**: **[https://razorpay-reserve-engine.onrender.com/](https://razorpay-reserve-engine.onrender.com/)**
+
+Deploy your own instance with 1 click:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Mansi5543/razorpay-reserve-engine)
+
+---
+
 ## 🏛️ Executive Summary
 
-In 2026, autonomous AI buyer agents (Claude, OpenAI agents, devops bots) need to book cloud compute, lease GPU clusters, and procure developer APIs on behalf of enterprise teams **without exposing raw credit/debit card numbers or triggering manual 2FA/OTP interruptions for every micro-transaction**.
+In 2026, autonomous AI buyer agents (Claude, OpenAI agents, DevOps bots) need to book cloud compute, lease GPU clusters, and procure developer APIs on behalf of enterprise teams **without exposing raw credit/debit card numbers or triggering manual 2FA/OTP interruptions for every micro-transaction**.
 
 **Razorpay ReserveEngine** solves this by implementing **NPCI UPI Reserve Pay (Single Block Multi-Debit - SBMD)**:
 1. **Pre-Authorized Payer Block**: The enterprise treasury signs a pre-authorized budget mandate (e.g. ₹5,000 / 500,000 paise) with designated Merchant Category Codes (MCC).
 2. **Autonomous Delegated Debits**: Authorized AI agents query machine-readable service catalogs and autonomously execute bounded debits against the mandate.
 3. **Deterministic Financial Gatekeeper**: The gatekeeper strictly evaluates idempotency, validity, permitted MCCs, and unspent reserve headroom using integer paise arithmetic. Under NO circumstances does an LLM calculate prices or adjust balances.
 4. **Cryptographic Tamper-Evident Ledger**: Every settled or rejected transaction produces an immutable audit record signed with **HMAC-SHA256** using the Razorpay API secret.
+5. **Zero-Setup Simulation Mode**: Runs out of the box with zero external dependencies; automatically simulates realistic payment gateways and orders if credentials are not configured.
 
 ---
 
@@ -71,11 +86,11 @@ sequenceDiagram
 
 ### 1. Data Models & Ledger Specification (`src/models/types.ts`)
 - **`MandateToken`**: Conforms to NPCI SBMD specifications (`id`, `payerVpa`, `authorizedAgentId`, `totalAuthorizedPaise`, `consumedPaise`, `availableHeadroomPaise`, `allowedMcc`, `status: ACTIVE | REVOKED | EXHAUSTED`, `expiresAt`).
-- **`LedgerEntry`**: Immutable transaction records signed with SHA-256 HMAC proofs computed over `mandateId + amountPaise + timestamp + idempotencyKey + verdict`.
+- **`LedgerEntry`**: Immutable transaction records signed with SHA-256 HMAC proofs computed over canonical payload `mandateId + amountPaise + timestamp + idempotencyKey + verdict`.
 - **`AgentService`**: Enterprise developer compute catalog with merchant VPA and MCC designations.
 
 ### 2. Guardrailed Gatekeeper (`src/services/settlementGateway.ts`)
-- **Deterministic Math Invariant**: All arithmetic operates on integer paise (`1 INR = 100 paise`). Floating-point rounding errors and LLM hallucinated math are mathematically impossible.
+- **Deterministic Math Invariant**: All arithmetic operates strictly on integer paise (`1 INR = 100 paise`). Floating-point rounding errors and LLM hallucinated prices are impossible.
 - **Multi-Stage Security Gatekeeper**:
   1. *Idempotency Check*: Guarantees exactly-once execution.
   2. *Mandate Status Verification*: Rejects revoked or expired mandates.
@@ -115,7 +130,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started Locally
 
 ### Prerequisites
 - Node.js >= 18.0.0
@@ -131,18 +146,13 @@ cd razorpay-reserve-engine
 npm install
 ```
 
-### Environment Configuration
-Copy the `.env.example` file:
-```bash
-cp .env.example .env
-```
-
-Ensure `.env` contains your configuration:
+### Environment Configuration (Optional)
+The project runs out of the box in sandbox simulation mode. To connect real Razorpay Test or Gemini API keys, create a `.env` file:
 ```env
 PORT=3000
-RAZORPAY_KEY_ID=rzp_test_placeholder
-RAZORPAY_KEY_SECRET=placeholder_secret
-GEMINI_API_KEY=placeholder_gemini_key
+RAZORPAY_KEY_ID=rzp_test_your_key
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### Running the Application
@@ -159,6 +169,20 @@ npm start
 ```
 
 Access the enterprise console at: **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## 🐳 Docker Deployment
+
+You can build and run the application using the multi-stage Dockerfile:
+
+```bash
+# Build Docker image
+docker build -t razorpay-reserve-engine .
+
+# Run Docker container
+docker run -d -p 3000:3000 --name reserve-engine razorpay-reserve-engine
+```
 
 ---
 
